@@ -6,9 +6,9 @@ Run "sudo mysql -u root"
 
 Create a new user that will be responsible for database queries
 
-mysql> create database <new name here>
+mysql> create database [new name here]
   
-mysql> use <new db>
+mysql> use [new db]
   
 mysql> source <path>\script.sql
   
