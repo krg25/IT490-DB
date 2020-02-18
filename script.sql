@@ -1,6 +1,6 @@
-CREATE DATABASE TestDirectory;
+CREATE DATABASE StockApp;
 
-USE TestDirectory;
+USE StockApp;
 
 CREATE TABLE SiteUsers(
 	user_id INT NOT NULL KEY AUTO_INCREMENT,
@@ -9,7 +9,7 @@ CREATE TABLE SiteUsers(
 	email VARCHAR(255) NOT NULL,
 	first_name VARCHAR(255),
 	last_name VARCHAR(255),
-	date_joined DATETIME
+	date_joined TIMESTAMP NOT NULL
 );
 
 CREATE TABLE StockInfo(
