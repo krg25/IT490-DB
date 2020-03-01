@@ -1,11 +1,11 @@
-CREATE DATABASE StockApp;
+CREATE DATABASE StockAppTest;
 \! echo "\nStockApp DB Created"
 
 USE StockApp;
 \! echo "\nCreating Table: SiteUsers"
 CREATE TABLE SiteUsers(
 	user_id INT NOT NULL KEY AUTO_INCREMENT,
-	username VARCHAR(255) NOT NULL,
+	username VARCHAR(255) NOT NULL UNIQUE,
 	password VARCHAR(255) NOT NULL,
 	email VARCHAR(255) NOT NULL,
 	first_name VARCHAR(255),
