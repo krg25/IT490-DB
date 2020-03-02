@@ -1,8 +1,9 @@
-CREATE DATABASE StockAppTest;
+CREATE DATABASE StockApp;
 \! echo "\nStockApp DB Created"
 
 USE StockApp;
 \! echo "\nCreating Table: SiteUsers"
+/*DONT CHANGE SiteUsers, DON'T CHANGE StockData, DON'T CHANGE StockInfo, other files are now dependent on this layout; if you must, let ken know*/
 CREATE TABLE SiteUsers(
 	user_id INT NOT NULL KEY AUTO_INCREMENT,
 	username VARCHAR(255) NOT NULL UNIQUE,
@@ -12,41 +13,47 @@ CREATE TABLE SiteUsers(
 	last_name VARCHAR(255),
 	date_joined TIMESTAMP NOT NULL
 );
+/*Unnessecary plus I don't get stock name from API
 \! echo "\nCreating Table: StockInfo"
 CREATE TABLE StockInfo(
-	stock_sym varchar(20) NOT NULL KEY,
+	symbol varchar(20) NOT NULL KEY,
 	stock_name varchar(255)
 );
+*/
 \! echo "\nCreating Table: StockData"
 CREATE TABLE StockData(
-	stock_sym VARCHAR(20) NOT NULL,
-	price_time ENUM('O', 'C') NOT NULL,
-	price FLOAT NOT NULL,
+	symbol VARCHAR(20) NOT NULL,
+/*	price_time ENUM('O', 'C') NOT NULL, */
+	open DOUBLE(8,2) NOT NULL,
+	high DOUBLE(8,2) NOT NULL,
+	low DOUBLE(8,2) NOT NULL,
+	price DOUBLE(8,2) NOT NULL,
+	prvclose DOUBLE(8,2) NOT NULL,
 	volume INT NOT NULL,
 	timestamp TIMESTAMP NOT NULL,
-	PRIMARY KEY(stock_sym, timestamp),
-	FOREIGN KEY (stock_sym) REFERENCES StockInfo(stock_sym)
+	PRIMARY KEY(symbol, timestamp)
+/*	FOREIGN KEY (symbol) REFERENCES StockInfo(symbol) */
 );
 \! echo "\nCreating Table: UserPortfolios"
 CREATE TABLE UserPortfolios(
 	portfolio_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	user_id INT NOT NULL,
-	stock_sym VARCHAR(20) NULL,
+	symbol VARCHAR(20) NULL,
 	stock_volume INT NULL,
 	stock_value FLOAT NULL,
 	FOREIGN KEY (user_id) REFERENCES SiteUsers(user_id),
-	FOREIGN KEY (stock_sym) REFERENCES StockData(stock_sym)
+	FOREIGN KEY (symbol) REFERENCES StockData(symbol)
 );
 \! echo "\nCreating Table: Transactions"
 CREATE TABLE Transactions(
 	trans_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
 	user_id INT NOT NULL,
 	price_type ENUM('S', 'B') NOT NULL,
-	stock_sym VARCHAR(20) NOT NULL,
+	symbol VARCHAR(20) NOT NULL,
 	value FLOAT NOT NULL,
 	trans_volume INT NOT NULL, 
 	FOREIGN KEY (user_id) REFERENCES SiteUsers(user_id),
-	FOREIGN KEY (stock_sym) REFERENCES StockData(stock_sym)
+	FOREIGN KEY (symbol) REFERENCES StockData(symbol)
 );
 \! echo "\nCreating Table: UserAccounts"
 CREATE TABLE UserAccounts(

@@ -3,9 +3,46 @@
 require_once('rabbit/path.inc');
 require_once('rabbit/get_host_info.inc');
 require_once('rabbit/rabbitMQLib.inc');
+require_once('StockData.php.inc');
 ini_set('display_errors', 'On');
 
-
+function getStockData($symbol){
+        if (!isset($dbc)){
+        require('mysqli_connect.php');
+        }
+	$stock = new stockDataLink($dbc);
+	$data = $stock->getStock($symbol);
+	$out['returnCode'] = 1;
+	$out['symbol']	 = $data['symbol'];
+	$out['open']	 = $data['open'];
+	$out['high']	 = $data['high'];
+	$out['low']	 = $data['low'];
+	$out['price']	 = $data['price'];
+	$out['volume']	 = $data['volume'];
+	$out['prvclose'] = $data['prvclose'];
+	return $out;
+	
+/*
+	if (empty(mysqli_error($dbc))){
+           if ($num == 1){
+		$out['0']=true;
+		$out['id']=$report['user_id'];
+		$out['user']=$report['username'];
+		$out['fname']=$report['first_name'];
+		$out['lname']=$report['last_name'];
+		$out['date']=$report['date_joined'];
+        	mysqli_close($dbc);
+                return $out;
+            }
+            else
+            {
+                $out['0']=false;
+                mysqli_close($dbc);
+                return $out;
+            }
+        }
+*/
+}
 function getUserInfo($id){
         if (!isset($dbc)){
         require('mysqli_connect.php');
@@ -155,7 +192,12 @@ function requestProcessor($request)
 	}else{
 	return array("returnCode" => '2');
 	}
-
+     
+     case "API":
+	$stockData=getStockData($request['symbol']);
+	if($stockData['returnCode'] == 1){
+	return $stockData;
+	}
 	
 
 
