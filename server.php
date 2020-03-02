@@ -24,7 +24,7 @@ function getStockData($symbol){
 	$out['volume']	 = $data['volume'];
 	$out['prvclose'] = $data['prvclose'];
 	}else{
-	$out['returnCode'] = 0;
+	$out['returnCode'] = 2;
 	}
 	
 	//var_dump($out);
@@ -185,9 +185,11 @@ function requestProcessor($request)
      case "API":
 	$stockData=getStockData($request['symbol']);
 	if($stockData['returnCode'] == 1){
-	echo ("Successful data get");
+	echo ("Successful data get".PHP_EOL);
 	//var_dump($stockData);
 	return $stockData;
+	}else{echo ("Unsuccessful data get, stock may not exist".PHP_EOL);
+	return array("returnCode" => '2');
 	}
 	
   }
