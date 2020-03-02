@@ -10,8 +10,11 @@ function getStockData($symbol){
         if (!isset($dbc)){
         require('mysqli_connect.php');
         }
+	$symbol = strtoupper($symbol);
 	$stock = new stockDataLink($dbc);
 	$data = $stock->getStock($symbol);
+	$out = array();
+	if(isset($data['symbol'])){//$data['returnCode'] == 1){
 	$out['returnCode'] = 1;
 	$out['symbol']	 = $data['symbol'];
 	$out['open']	 = $data['open'];
@@ -20,28 +23,13 @@ function getStockData($symbol){
 	$out['price']	 = $data['price'];
 	$out['volume']	 = $data['volume'];
 	$out['prvclose'] = $data['prvclose'];
+	}else{
+	$out['returnCode'] = 0;
+	}
+	
+	//var_dump($out);
 	return $out;
 	
-/*
-	if (empty(mysqli_error($dbc))){
-           if ($num == 1){
-		$out['0']=true;
-		$out['id']=$report['user_id'];
-		$out['user']=$report['username'];
-		$out['fname']=$report['first_name'];
-		$out['lname']=$report['last_name'];
-		$out['date']=$report['date_joined'];
-        	mysqli_close($dbc);
-                return $out;
-            }
-            else
-            {
-                $out['0']=false;
-                mysqli_close($dbc);
-                return $out;
-            }
-        }
-*/
 }
 function getUserInfo($id){
         if (!isset($dbc)){
@@ -51,6 +39,7 @@ function getUserInfo($id){
         $r = @mysqli_query($dbc, $q);
         $num = @mysqli_num_rows($r);
 	$report = mysqli_fetch_assoc($r);
+
 
 	if (empty(mysqli_error($dbc))){
            if ($num == 1){
@@ -196,13 +185,11 @@ function requestProcessor($request)
      case "API":
 	$stockData=getStockData($request['symbol']);
 	if($stockData['returnCode'] == 1){
+	echo ("Successful data get");
+	//var_dump($stockData);
 	return $stockData;
 	}
 	
-
-
-     case "validate_session":
-      return doValidate($request['sessionId']);
   }
 
    return array("returnCode" => '0', 'message'=>"Error, unsupported message type");
