@@ -39,8 +39,8 @@ CREATE TABLE UserPortfolios(
 	portfolio_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	user_id INT NOT NULL,
 	symbol VARCHAR(20) NULL,
-	stock_volume INT NULL,
-	stock_value FLOAT NULL,
+	stock_owned INT NULL,
+	stock_initialValue DOUBLE(8,2) NULL,
 	FOREIGN KEY (user_id) REFERENCES SiteUsers(user_id),
 	FOREIGN KEY (symbol) REFERENCES StockData(symbol)
 );
@@ -50,7 +50,7 @@ CREATE TABLE Transactions(
 	user_id INT NOT NULL,
 	price_type ENUM('S', 'B') NOT NULL,
 	symbol VARCHAR(20) NOT NULL,
-	value FLOAT NOT NULL,
+	value DOUBLE(8,2) NOT NULL,
 	trans_volume INT NOT NULL, 
 	FOREIGN KEY (user_id) REFERENCES SiteUsers(user_id),
 	FOREIGN KEY (symbol) REFERENCES StockData(symbol)
@@ -59,7 +59,7 @@ CREATE TABLE Transactions(
 CREATE TABLE UserAccounts(
 	user_id INT NOT NULL,
 	portfolio_id INT NULL,
-	portfolio_value FLOAT NOT NULL DEFAULT 100000,
+	user_wallet DOUBLE(8,2) NOT NULL DEFAULT 100000,
 	FOREIGN KEY (portfolio_id) REFERENCES UserPortfolios(portfolio_id)
 );
 
