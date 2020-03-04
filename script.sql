@@ -40,7 +40,12 @@ CREATE TABLE UserPortfolios(
 	user_id INT NOT NULL,
 	symbol VARCHAR(20) NULL,
 	stock_owned INT NULL,
-	stock_initialValue DOUBLE(8,2) NULL,
+	stock_initial DOUBLE(8,2) NULL,
+/*	stock_current 
+	{SELECT price FROM StockData 
+	WHERE (StockData.symbol=symbol AND timestamp>DATE_SUB(NOW(), INTERVAL 1 DAY)) 		ORDER BY timestamp DESC LIMIT 1;}
+	(or something like that, can be added retroactively I believe)
+*/
 	FOREIGN KEY (user_id) REFERENCES SiteUsers(user_id),
 	FOREIGN KEY (symbol) REFERENCES StockData(symbol)
 );
@@ -48,10 +53,11 @@ CREATE TABLE UserPortfolios(
 CREATE TABLE Transactions(
 	trans_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
 	user_id INT NOT NULL,
-	price_type ENUM('S', 'B') NOT NULL,
+/*	price_type ENUM('S', 'B') NOT NULL, */
 	symbol VARCHAR(20) NOT NULL,
-	value DOUBLE(8,2) NOT NULL,
+	stock_value DOUBLE(8,2) NOT NULL,
 	trans_volume INT NOT NULL, 
+	timestamp TIMESTAMP NOT NULL,
 	FOREIGN KEY (user_id) REFERENCES SiteUsers(user_id),
 	FOREIGN KEY (symbol) REFERENCES StockData(symbol)
 );
@@ -60,6 +66,9 @@ CREATE TABLE UserAccounts(
 	user_id INT NOT NULL,
 	portfolio_id INT NULL,
 	user_wallet DOUBLE(8,2) NOT NULL DEFAULT 100000,
+/*  	portfolio_value = (where userPortfolios.user_id = user_id, sum(stock_value))
+	or something like that, I don't know 
+*/
 	FOREIGN KEY (portfolio_id) REFERENCES UserPortfolios(portfolio_id)
 );
 
