@@ -41,10 +41,11 @@ CREATE TABLE UserPortfolios(
 	symbol VARCHAR(20) NULL,
 	stock_owned INT NULL,
 	stock_initial DOUBLE(8,2) NULL,
-/*	stock_current 
-	{SELECT price FROM StockData 
-	WHERE (StockData.symbol=symbol AND timestamp>DATE_SUB(NOW(), INTERVAL 1 DAY)) ORDER BY timestamp DESC LIMIT 1;}
-	(or something like that, can be added retroactively I believe)
+
+/*	SELECT price FROM StockData WHERE StockData.symbol = $UserPortfolios.symbol,	
+	stock_current DOUBLE(8,2) GENERATED ALWAYS AS (StockData.price * UserPortfolios.stock_owned),
+
+unsure
 */
 	FOREIGN KEY (user_id) REFERENCES SiteUsers(user_id),
 	FOREIGN KEY (symbol) REFERENCES StockData(symbol)

@@ -70,6 +70,50 @@ class transactionLink
 
 	}//function
 
+	function getTransactionsByUser($id)
+	{
+		$this->user_id = $id;
+
+		$q="SELECT * FROM Transactions WHERE (user_id='$id') ORDER BY timestamp DESC"; 
+
+		$sqlResult = @mysqli_query($this->sqlConnection,$q);
+		$num = @mysqli_num_rows($sqlResult);
+		$out = array();
+		if(empty(mysqli_error($this->sqlConnection)))
+		{
+			if($num >= 1) //should be one result or more
+			{
+				$out[0]['returnCode']=1;
+				echo("Found " . $num. " entries".PHP_EOL);
+				$count = 0;
+				while ($row = mysqli_fetch_assoc($sqlResult)){
+				$count=$count+=1;
+					$out[$count]['trid']=$row['trans_id'];
+					$out[$count]['symbol']=$row['symbol'];
+					$out[$count]['price']=$row['stock_value'];
+					$out[$count]['qty']=$row['trans_volume'];
+					$out[$count]['time']=$row['timestamp'];
+				}
+				
+				return $out;
+				mysqli_close();
+			}
+			else
+			{
+				echo("No results in DB".PHP_EOL);
+				$out[0]['returnCode']=2;
+				return $out;
+				mysqli_close();
+			}
+		}
+		else
+		{
+		echo("SQL Error" . mysqli_error($this->sqlConnection));
+		}
+}
+
+
+/*
 	function getTransactionsByTrans($id)
 	{
 
@@ -106,7 +150,7 @@ class transactionLink
 		}
 }
 	
-
+*/
 
 
 }

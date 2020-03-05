@@ -90,6 +90,20 @@ function getPortfolio($id){
         }
 
 }
+function getTransactions($id){
+        if (!isset($dbc)){
+        require('mysqli_connect.php');
+        }
+	$translink = new transactionLink($dbc);
+	$out = $translink->getTransactionsByUser($id);
+
+	if (empty(mysqli_error($dbc))){
+ 
+        	mysqli_close($dbc);
+                return $out;
+        }
+
+}
 function doLogin($username,$password)
 {
 	if (!isset($dbc)){
@@ -238,18 +252,27 @@ function requestProcessor($request)
 	return array("returnCode" => '2');
 	}
 
-	case "Transaction":
+	case "Transaction": 
+	if(isset($request['sub'])){
+if($request['sub'] == 1){
 	if(doTransaction($request)){
 	return array("returnCode" => '1');
 	}else{
 	return array("returnCode" => '2');
 	}
+}elseif($request['sub'] == 2){
+	$out = getTransactions($request['ID']);	
+	return $out;
+	}
+	}
 	
+
 	case "Portfolio":
 	$out=getPortfolio($request['ID']);
 	return $out;
 	
-  }
+  
+}
 
    return array("returnCode" => '0', 'message'=>"Error, unsupported message type");
 }
