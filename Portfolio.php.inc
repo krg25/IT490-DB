@@ -14,6 +14,9 @@ class portfolioLink
 
 	function getPortfolio($id)
 	{
+		require_once('Logger.php.inc');
+		$logger = new logger("Portfolio.php.inc->getPortfolio",'rabbit.ini');
+
 		$this->user_id = $id;
 
 	$q="SELECT * FROM UserPortfolios WHERE (user_id='$id') ORDER BY symbol ASC"; 
@@ -41,6 +44,7 @@ class portfolioLink
 			}
 			else
 			{
+				$logger->logDebug("No results in DB", PHP_EOL);
 				echo("No results in DB".PHP_EOL);
 				$out[0]['returnCode']=2;
 				return $out;
@@ -49,7 +53,8 @@ class portfolioLink
 		}
 		else
 		{
-		echo("SQL Error" . mysqli_error($this->sqlConnection));
+			$logger->logError("SQL ERROR","ERROR",mysqli_error($this-sqlConnection));
+			echo("SQL Error" . mysqli_error($this->sqlConnection));
 		}
 }
 
