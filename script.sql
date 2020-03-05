@@ -41,6 +41,7 @@ CREATE TABLE UserPortfolios(
 	symbol VARCHAR(20) NULL,
 	stock_owned INT NULL,
 	stock_initial DOUBLE(8,2) NULL,
+	stock_current DOUBLE(8,2) NULL,
 
 /*	SELECT price FROM StockData WHERE StockData.symbol = $UserPortfolios.symbol,	
 	stock_current DOUBLE(8,2) GENERATED ALWAYS AS (StockData.price * UserPortfolios.stock_owned),

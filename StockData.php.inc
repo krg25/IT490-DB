@@ -6,6 +6,7 @@ class stockDataLink
 	private $stock_symbol;
 	private $stock_array;
 
+
 	function __construct($sqlConn)
 	{
 		$this->sqlConnection = $sqlConn;
