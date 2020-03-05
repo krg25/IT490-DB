@@ -43,7 +43,7 @@ CREATE TABLE UserPortfolios(
 	stock_initial DOUBLE(8,2) NULL,
 /*	stock_current 
 	{SELECT price FROM StockData 
-	WHERE (StockData.symbol=symbol AND timestamp>DATE_SUB(NOW(), INTERVAL 1 DAY)) 		ORDER BY timestamp DESC LIMIT 1;}
+	WHERE (StockData.symbol=symbol AND timestamp>DATE_SUB(NOW(), INTERVAL 1 DAY)) ORDER BY timestamp DESC LIMIT 1;}
 	(or something like that, can be added retroactively I believe)
 */
 	FOREIGN KEY (user_id) REFERENCES SiteUsers(user_id),
@@ -63,13 +63,12 @@ CREATE TABLE Transactions(
 );
 \! echo "\nCreating Table: UserAccounts"
 CREATE TABLE UserAccounts(
-	user_id INT NOT NULL,
-	portfolio_id INT NULL,
+	user_id INT NOT NULL PRIMARY KEY,
 	user_wallet DOUBLE(8,2) NOT NULL DEFAULT 100000,
 /*  	portfolio_value = (where userPortfolios.user_id = user_id, sum(stock_value))
 	or something like that, I don't know 
 */
-	FOREIGN KEY (portfolio_id) REFERENCES UserPortfolios(portfolio_id)
+	FOREIGN KEY (user_id) REFERENCES SiteUsers(user_id)
 );
 
 \! echo "\nCreating DB Connection User"
@@ -78,10 +77,13 @@ GRANT ALL ON *.* TO 'connectionuser'@'localhost' WITH GRANT OPTION;
 
 \! echo "\n\nDatabase Added. Adding Test User to SiteUsers."
 
-INSERT INTO SiteUsers (username,password,email,first_name,last_name)
-VALUES('test','test123','test@test.com','Test','User');
+INSERT INTO SiteUsers (user_id, username,password,email,first_name,last_name)
+VALUES('2', 'test','test123','test@test.com','Test','User');
+
+INSERT INTO UserAccounts (user_id) VALUES ('2');
 
 SELECT * FROM SiteUsers WHERE username='test';
+SELECT * FROM UserAccounts;
 
 SHOW TABLES;
 

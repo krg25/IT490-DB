@@ -4,7 +4,22 @@ require_once('rabbit/path.inc');
 require_once('rabbit/get_host_info.inc');
 require_once('rabbit/rabbitMQLib.inc');
 require_once('StockData.php.inc');
+require_once('Transaction.php.inc');
+require_once('Portfolio.php.inc');
 ini_set('display_errors', 'On');
+
+function doTransaction($res){
+        if (!isset($dbc)){
+        require('mysqli_connect.php');
+        }
+	//$symbol = strtoupper($symbol);
+	$transaction = new transactionLink($dbc);
+	$out = array();
+	$out = $transaction->storeTransaction($res);
+	return $out;
+	
+
+}
 
 function getStockData($symbol){
         if (!isset($dbc)){
@@ -61,6 +76,20 @@ function getUserInfo($id){
         }
 
 }
+function getPortfolio($id){
+        if (!isset($dbc)){
+        require('mysqli_connect.php');
+        }
+	$port = new portfolioLink($dbc);
+	$out = $port->getPortfolio($id);
+
+	if (empty(mysqli_error($dbc))){
+ 
+        	mysqli_close($dbc);
+                return $out;
+        }
+
+}
 function doLogin($username,$password)
 {
 	if (!isset($dbc)){
@@ -98,6 +127,7 @@ function doLogin($username,$password)
 }
 function doRegister($username,$password,$email,$fname,$lname)
 {
+	$out=array();
 	if (!isset($dbc)){
 	require('mysqli_connect.php');
 	}
@@ -110,20 +140,36 @@ function doRegister($username,$password,$email,$fname,$lname)
 		$q = "SELECT * FROM SiteUsers WHERE (username='$username' AND password='$password')";
 		$r = @mysqli_query($dbc, $q);
 		$num = @mysqli_num_rows($r);
-		$report = mysqli_fetch_assoc($r);
+		if (empty(mysqli_error($dbc))){
+			$report = mysqli_fetch_assoc($r);
 			$out['0'] = true;
 			$out['id']=$report['user_id'];
-		mysqli_close($dbc);
-		echo "New Registration!\n";
-		return  $out;
+
+			$q = "INSERT INTO UserAccounts (user_id) VALUES (".$report['user_id'].")";
+			$r = @mysqli_query($dbc, $q);
+			$num = @mysqli_num_rows($r);
+		$report = "";
+
+			if (empty(mysqli_error($dbc))){
+			mysqli_close($dbc);
+			echo "New Registration!\n";
+			return  $out;
+			}else{
+			echo(mysqli_error($dbc));
+			}			
+
+		}else{
+		echo(mysqli_error($dbc)); //who gives a flying fuck
 		}
-		else
-		{
-		echo "A registration resulted in an error: ".mysqli_error($dbc).PHP_EOL;
-		$out['0']=false;
-		mysqli_close($dbc);
-		return $out;
-		}
+
+	}
+	else
+	{
+	echo "A registration resulted in an error: ".mysqli_error($dbc).PHP_EOL;
+	$out['0']=false;
+	mysqli_close($dbc);
+	return $out;
+	}
 	
 
 
@@ -191,6 +237,17 @@ function requestProcessor($request)
 	}else{echo ("Unsuccessful data get, stock may not exist".PHP_EOL);
 	return array("returnCode" => '2');
 	}
+
+	case "Transaction":
+	if(doTransaction($request)){
+	return array("returnCode" => '1');
+	}else{
+	return array("returnCode" => '2');
+	}
+	
+	case "Portfolio":
+	$out=getPortfolio($request['ID']);
+	return $out;
 	
   }
 
