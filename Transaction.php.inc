@@ -16,6 +16,9 @@ class transactionLink
 
 	function storeTransaction($res) //need to store transaction
 	{
+		require_once('Logger.php.inc');
+		$logger = new logger('Transactions.php.inc->storeTransaction','rabbit.ini');
+
 	$q=("SELECT * FROM UserAccounts WHERE (user_id = ".$res['user_id'].")");
 	$sqlResult = @mysqli_query($this->sqlConnection,$q);
 	$num = @mysqli_num_rows($sqlResult);
@@ -52,19 +55,26 @@ class transactionLink
 						
 						return true;
 					}else{
+						$logger->logError("Error Inserting to UserPortfolios","ERROR",mysqli_error($this->sqlConnection));
+						
 						echo ("Error inserting to UserPortfolios: " . mysqli_error($this->sqlConnection));
 					}//ifelse insert UserPortfolios
 				}else{
+					$logger->logError("Error in Update","ERROR",mysqli_error($this->sqlConnection));
 				echo ("Error in update: " . mysqli_error($this->sqlConnection));
 				}//ifelse update UserAccounts
 
 			
 			}else{
+				$logger->logError("Error Inserting new Transaction to table","ERROR", mysqli_error($this->sqlConnection));
 			echo ("Error inserting new transaction to table" . mysqli_error($this->sqlConnection));
 			}//ifelse insert Transactions
-		}else{echo "You can't afford this stock, broke ass.";} //if wallet>=cost
+		}else{echo "You can't afford this stock, broke ass.";
+		$logger->logDebug("Not enough Funds",'Not enough funds in the wallet to complete transaction');
+		} //if wallet>=cost
 		
 	}else{
+		$logger->logError("Error Getting User Account",'ERROR',mysqli_error($this->sqlConnection));
 	echo ("Error getting user account" . mysqli_error($this->sqlConnection));
 	}//ifelse get UserAccount
 

@@ -71,6 +71,16 @@ CREATE TABLE UserAccounts(
 	FOREIGN KEY (user_id) REFERENCES SiteUsers(user_id)
 );
 
+
+\! echo "\nCreating Portfolio History Table"
+CREATE TABLE PortfolioHistory(
+	user_id INT NOT NULL PRIMARY KEY,
+	timestamp TIMESTAMP NOT NULL,
+	portfolio_value DOUBLE(8,2),
+	FOREIGN KEY (user_id) REFERENCES SiteUsers(user_id)
+);
+
+
 \! echo "\nCreating DB Connection User"
 CREATE USER 'connectionuser'@'localhost' IDENTIFIED BY 'conn3ctpass';
 GRANT ALL ON *.* TO 'connectionuser'@'localhost' WITH GRANT OPTION;

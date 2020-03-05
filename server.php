@@ -9,6 +9,9 @@ require_once('Portfolio.php.inc');
 ini_set('display_errors', 'On');
 
 function doTransaction($res){
+	require_once('Logger.php.inc');
+	$log = new logger('server.php->doTransaction','rabbit.ini');
+
         if (!isset($dbc)){
         require('mysqli_connect.php');
         }
@@ -16,12 +19,16 @@ function doTransaction($res){
 	$transaction = new transactionLink($dbc);
 	$out = array();
 	$out = $transaction->storeTransaction($res);
+	$log->logDebug("Success","Transaction Successful");
 	return $out;
 	
 
 }
 
 function getStockData($symbol){
+	require_once('Logger.php.inc');
+	$log = new logger('server.php->getStockData','rabbit.ini');
+
         if (!isset($dbc)){
         require('mysqli_connect.php');
         }
@@ -47,6 +54,9 @@ function getStockData($symbol){
 	
 }
 function getUserInfo($id){
+	require_once('Logger.php.inc','rabbit.ini');
+	$log = new logger('server.php->getUserInfo','rabbit.ini');
+
         if (!isset($dbc)){
         require('mysqli_connect.php');
         }
@@ -92,6 +102,9 @@ function getPortfolio($id){
 }
 function doLogin($username,$password)
 {
+	require_once('Logger.php.ini');
+	$log = new logger('server.php->doLogin','rabbit.ini');
+
 	if (!isset($dbc)){
 	require('mysqli_connect.php');
 	}
@@ -105,11 +118,13 @@ function doLogin($username,$password)
 			$out['0'] = true;
 			$out['id']=$report['user_id'];
 		mysqli_close($dbc);
+		$log->logDebug('Success','User logged in successfully');	
 		echo "Valid login!\n";
 		return  $out;
 		}
 		else
 		{
+		$log->logDebug('Failed','Incorrect login credentials');	
 		echo "Error: Incorrect login\n";
 		mysqli_close($dbc);
 			$out['0'] = false;
@@ -118,6 +133,7 @@ function doLogin($username,$password)
 	}
 	else
 	{
+		$log->logError('SQL Error','ERROR',mysqli_error($dbc));
 		echo "SQL Error: ".mysqli_error($dbc)."\n";
 		mysqli_close($dbc);
 			$out['0'] = false;
@@ -127,6 +143,9 @@ function doLogin($username,$password)
 }
 function doRegister($username,$password,$email,$fname,$lname)
 {
+	require_once('Logger.php.inc');
+	$log = new logger('server.php->doRegister','rabbit.ini');
+
 	$out=array();
 	if (!isset($dbc)){
 	require('mysqli_connect.php');
@@ -152,6 +171,7 @@ function doRegister($username,$password,$email,$fname,$lname)
 
 			if (empty(mysqli_error($dbc))){
 			mysqli_close($dbc);
+			$log-logDebug('Success','New user Registered');
 			echo "New Registration!\n";
 			return  $out;
 			}else{
@@ -159,12 +179,15 @@ function doRegister($username,$password,$email,$fname,$lname)
 			}			
 
 		}else{
+		$log->logError("Registration Error",'ERROR',mysqli_error($dbc));	
 		echo(mysqli_error($dbc)); //who gives a flying fuck
 		}
 
 	}
 	else
 	{
+		
+	$log->logError("Registration Error",'ERROR',mysqli_error($dbc));	
 	echo "A registration resulted in an error: ".mysqli_error($dbc).PHP_EOL;
 	$out['0']=false;
 	mysqli_close($dbc);
@@ -177,12 +200,17 @@ function doRegister($username,$password,$email,$fname,$lname)
 
 function requestProcessor($request)
 {
+  require_once(Logger.php.inc);
+  $log = new logger('server.php->requestProcessor','rabbit.ini');
+
+  $log->logDebug('Request Received',PHP_EOL);
   echo "received request".PHP_EOL;
   var_dump($request);
 
 
   if(!isset($request['type']))
   {
+    $log->logError("Processor Error","ERROR","Unsupported Message Type");
     return "ERROR: unsupported message type";
   }
   switch ($request['type'])
