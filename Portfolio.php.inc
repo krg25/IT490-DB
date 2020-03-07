@@ -15,7 +15,10 @@ class portfolioLink
 
 	function getPortfolio($id)
 	{
-		//require_once("StockData.php.inc");
+
+		require_once('Logger.php.inc');
+		$logger = new logger("Portfolio.php.inc->getPortfolio",'rabbit/rabbit.ini');
+
 		$this->user_id = $id;
 
 	$q="SELECT * FROM UserPortfolios WHERE (user_id='$id') ORDER BY symbol ASC"; 
@@ -23,12 +26,12 @@ class portfolioLink
 		$sqlResult = @mysqli_query($this->sqlConnection,$q);
 		$num = @mysqli_num_rows($sqlResult);
 		$out = array();
-		//$symbol = strtoupper($symbol);
+
 
 		$stock = new stockDataLink($this->sqlConnection);
 		
 
-	//if(isset($sqlResult['symbol'])){
+
 		if(empty(mysqli_error($this->sqlConnection)))
 		{
 			if($num >= 1) //should be one result or more
@@ -73,23 +76,30 @@ class portfolioLink
 				return $out;
 				mysqli_close();
 
+
 				}else{ ///3rd if
 				echo "error getting the wallet".mysqli_error($this->sqlConnection);
+				$logger->logError("Error Updating User Wallet", "Error", mysqli_error($this-sqlConnection));
+				
+
 				}
-			}else{ //second if, num
+
+			}else{
+				$logger->logDebug("No results in DB". PHP_EOL);
 				echo("No results in DB".PHP_EOL);
 				$out[0]['returnCode']=2;
 				return $out;
 				mysqli_close();
 			}
-		
+
 		}else{
-		echo("SQL Error" . mysqli_error($this->sqlConnection));
+			$logger->logError("SQL ERROR","ERROR",mysqli_error($this-sqlConnection));
+			echo("SQL Error" . mysqli_error($this->sqlConnection));
 		}
 }
 
 	
 
-//}
+
 
 }
