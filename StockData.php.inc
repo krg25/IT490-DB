@@ -77,7 +77,7 @@ VALUES ('".$res['symbol']."','".$res['open']."','".$res['high']."','".$res['low'
 			}
 			else
 			{
-				$logger->logDebug('No results in DB',PHP_EOL0);
+				$logger->logDebug('No results in DB',PHP_EOL);
 
 				echo("No results in DB".PHP_EOL);
 				$this->stock_array = $this->apiLookup($this->stock_symbol);

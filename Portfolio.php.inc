@@ -85,7 +85,7 @@ class portfolioLink
 				}
 
 			}else{
-				$logger->logDebug("No results in DB". PHP_EOL);
+				$logger->logDebug("No results in DB", PHP_EOL);
 				echo("No results in DB".PHP_EOL);
 				$out[0]['returnCode']=2;
 				return $out;

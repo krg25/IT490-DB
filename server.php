@@ -54,7 +54,7 @@ function getStockData($symbol){
 	
 }
 function getUserInfo($id){
-	require_once('Logger.php.inc','rabbit/rabbit.ini');
+	require_once('Logger.php.inc');
 	$log = new logger('server.php->getUserInfo','rabbit/rabbit.ini');
 
         if (!isset($dbc)){
@@ -116,7 +116,7 @@ function getTransactions($id){
 }
 function doLogin($username,$password)
 {
-	require_once('Logger.php.ini');
+	require_once('Logger.php.inc');
 	$log = new logger('server.php->doLogin','rabbit/rabbit.ini');
 
 	if (!isset($dbc)){
@@ -185,7 +185,7 @@ function doRegister($username,$password,$email,$fname,$lname)
 
 			if (empty(mysqli_error($dbc))){
 			mysqli_close($dbc);
-			$log-logDebug('Success','New user Registered');
+			$log->logDebug('Success','New user Registered');
 			echo "New Registration!\n";
 			return  $out;
 			}else{
@@ -214,7 +214,7 @@ function doRegister($username,$password,$email,$fname,$lname)
 
 function requestProcessor($request)
 {
-  require_once(Logger.php.inc);
+  require_once('Logger.php.inc');
   $log = new logger('server.php->requestProcessor','rabbit/rabbit.ini');
 
   $log->logDebug('Request Received',PHP_EOL);
