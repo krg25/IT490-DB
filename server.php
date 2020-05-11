@@ -212,6 +212,57 @@ function doRegister($username,$password,$email,$fname,$lname)
 
 }
 
+function insertChat($username, $content){
+require ('mysqli_connect.php');
+$timestamp = date('Y-m-d G:i:s');
+$username = mysqli_real_escape_string($dbc, $username);
+$content = mysqli_real_escape_string($dbc, $content);
+$out = array();
+$q = "INSERT INTO chat_log (username, content, timestamp) VALUES ('$username', '$content', '$timestamp')";
+$r = @mysqli_query($dbc, $q);
+if (empty(mysqli_error($dbc))){
+	echo "Post submitted".PHP_EOL;
+	$out['0'] = 1;
+	return $out;
+}else{
+	echo "Error: " . mysqli_error($dbc) . PHP_EOL;
+	$out['0'] = 2;
+	return $out;
+}
+mysqli_close($dbc);
+}
+
+function getChatLog(){
+require ('mysqli_connect.php');
+$q = "SELECT username, content, timestamp FROM chat_log ORDER BY timestamp ASC";
+$r = @mysqli_query($dbc, $q);
+
+if (empty(mysqli_error($dbc))){
+	//success, let's not flood the cli because this happens often
+	$out['0'] = 1;	
+	$i = 1;
+	
+	foreach($r as $line){
+	$out[$i]['username']=$line['username'];
+	$out[$i]['content']=$line['content'];
+	$out[$i]['timestamp']=$line['timestamp'];
+	$i = $i + 1;
+	}
+
+	return $out;
+}else{
+	echo "Error: " . mysqli_error($dbc) . PHP_EOL;
+	$out['0'] = 2;
+	return $out;
+}
+
+
+
+mysqli_close($dbc);
+
+}
+
+
 function requestProcessor($request)
 {
   require_once('Logger.php.inc');
@@ -298,6 +349,15 @@ if($request['sub'] == 1){
 	case "Portfolio":
 	$out=getPortfolio($request['ID']);
 	return $out;
+
+	case "InsertChat":
+	$out=insertChat($request['username'],$request['content']);
+	return $out;
+
+	case "GetChatLog":
+	$out=getChatLog();
+	return $out;
+
 	
   
 }

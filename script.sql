@@ -6,11 +6,11 @@ USE StockApp;
 /*DONT CHANGE SiteUsers, DON'T CHANGE StockData, DON'T CHANGE StockInfo, other files are now dependent on this layout; if you must, let ken know*/
 CREATE TABLE SiteUsers(
 	user_id INT NOT NULL KEY AUTO_INCREMENT,
-	username VARCHAR(255) NOT NULL UNIQUE,
-	password VARCHAR(255) NOT NULL,
-	email VARCHAR(255) NOT NULL,
-	first_name VARCHAR(255),
-	last_name VARCHAR(255),
+	username VARCHAR(32) NOT NULL UNIQUE,
+	password VARCHAR(32) NOT NULL,
+	email VARCHAR(64) NOT NULL,
+	first_name VARCHAR(32),
+	last_name VARCHAR(32),
 	date_joined TIMESTAMP NOT NULL
 );
 /*Unnessecary plus I don't get stock name from API
@@ -82,6 +82,13 @@ CREATE TABLE PortfolioHistory(
 	FOREIGN KEY (user_id) REFERENCES SiteUsers(user_id)
 );
 
+\! echo "\nCreating Chat Log Table"
+CREATE TABLE chat_log(
+chat_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+username VARCHAR(32) NOT NULL,
+content VARCHAR(128) NOT NULL,
+timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
 
 \! echo "\nCreating DB Connection User"
 CREATE USER 'connectionuser'@'localhost' IDENTIFIED BY 'conn3ctpass';
