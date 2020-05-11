@@ -8,8 +8,12 @@ Type=simple
 Restart=always
 RestartSec=1
 User=root
-ExecStart=/usr/bin/env php /home/ubuntu/git/IT490-DB 
+#ExecStart=/usr/bin/env php /home/ubuntu/git/IT490-DB 
+WorkingDirectory=/home/ubuntu/git/IT490-DB
+ExecStart=/bin/bash /home/ubuntu/git/IT490-DB/startStockApp.sh
 RemainAfterExit=true
-
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=stockdb
 [Install]
 WantedBy=multi-user.target
