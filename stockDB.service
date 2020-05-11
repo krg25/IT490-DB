@@ -1,0 +1,15 @@
+[Unit]
+Description=Stock App Database Listener
+After=network.target
+After=mysqld.service
+StartLimitIntervalSec=0
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+User=root
+ExecStart=/usr/bin/env php /home/ubuntu/git/IT490-DB 
+RemainAfterExit=true
+
+[Install]
+WantedBy=multi-user.target
